@@ -30,3 +30,16 @@ def import_dotenv(vault: Dict, input_path: str) -> int:
                 vault[key] = value
                 count += 1
     return count
+
+
+def export_shell(vault: Dict, output_path: str) -> None:
+    """Write vault variables to a shell script that exports each variable.
+
+    The resulting file can be sourced in a shell session:
+        source /path/to/output.sh
+    """
+    with open(output_path, "w") as f:
+        f.write("#!/bin/sh\n")
+        for key, value in vault.items():
+            escaped = value.replace('"', '\\"')
+            f.write(f'export {key}="{escaped}"\n')
