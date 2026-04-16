@@ -67,3 +67,28 @@ def list_vars(
 ) -> Dict[str, str]:
     """Return all variables stored in the vault."""
     return load_vault(password, vault_path)
+
+
+def inject_env(
+    password: str,
+    vault_path: str = DEFAULT_VAULT_FILE,
+    overwrite: bool = False,
+) -> Dict[str, str]:
+    """Load vault variables into the current process environment.
+
+    Args:
+        password: The vault password used for decryption.
+        vault_path: Path to the vault file.
+        overwrite: If True, overwrite existing environment variables.
+                   If False (default), skip variables already set.
+
+    Returns:
+        A dict of the variables that were actually injected.
+    """
+    data = load_vault(password, vault_path)
+    injected = {}
+    for key, value in data.items():
+        if overwrite or key not in os.environ:
+            os.environ[key] = value
+            injected[key] = value
+    return injected
