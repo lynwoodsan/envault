@@ -37,6 +37,11 @@ def test_delete(runner):
     assert "FOO" not in result.output
 
 
+def test_delete_nonexistent(runner):
+    result = invoke(runner, ["delete", "DOES_NOT_EXIST"])
+    assert result.exit_code != 0 or "not found" in result.output.lower()
+
+
 def test_export(runner, tmp_path):
     invoke(runner, ["set", "KEY", "value123"])
     out_file = str(tmp_path / "out.env")
