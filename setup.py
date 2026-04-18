@@ -35,4 +35,8 @@ setup(
         "Topic :: Security :: Cryptography",
         "Topic :: Utilities",
     ],
+    project_urls={
+        "Bug Tracker": "https://github.com/envault/envault/issues",
+        "Source Code": "https://github.com/envault/envault",
+    },
 )
