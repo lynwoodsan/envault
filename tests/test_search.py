@@ -55,6 +55,13 @@ def test_search_returns_values(vault_file):
     assert result["DB_HOST"] == "localhost"
 
 
+def test_search_exact_name_no_wildcard(vault_file):
+    """Searching by exact name without wildcards should return only that key."""
+    result = search_vars(vault_file, PASSWORD, "APP_ENV")
+    assert list(result.keys()) == ["APP_ENV"]
+    assert result["APP_ENV"] == "production"
+
+
 def test_search_by_value_basic(vault_file):
     matches = search_by_value(vault_file, PASSWORD, "secret")
     assert "API_KEY" in matches
@@ -75,3 +82,9 @@ def test_search_by_value_case_sensitive_no_match(vault_file):
 def test_search_by_value_no_match(vault_file):
     matches = search_by_value(vault_file, PASSWORD, "nonexistent")
     assert matches == []
+
+
+def test_search_by_value_exact_full_value(vault_file):
+    """Searching by a complete value string should return the matching key."""
+    matches = search_by_value(vault_file, PASSWORD, "localhost")
+    assert matches == ["DB_HOST"]
