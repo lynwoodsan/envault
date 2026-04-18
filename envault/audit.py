@@ -41,6 +41,11 @@ def get_events(vault_dir: str) -> list:
     return _load_events(_audit_path(vault_dir))
 
 
+def get_events_for_key(vault_dir: str, key: str) -> list:
+    """Return all audit events related to a specific key."""
+    return [e for e in get_events(vault_dir) if e.get("key") == key]
+
+
 def clear_events(vault_dir: str) -> None:
     """Clear the audit log."""
     path = _audit_path(vault_dir)
