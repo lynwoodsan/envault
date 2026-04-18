@@ -62,3 +62,10 @@ def test_encrypt_unicode():
     unicode_text = "SECRET=caf\u00e9\u2615"
     token = encrypt(unicode_text, PASSWORD)
     assert decrypt(token, PASSWORD) == unicode_text
+
+
+def test_encrypt_large_payload():
+    """Encryption and decryption should work correctly for large inputs."""
+    large_text = "KEY=" + "x" * 100_000
+    token = encrypt(large_text, PASSWORD)
+    assert decrypt(token, PASSWORD) == large_text
