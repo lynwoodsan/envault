@@ -38,6 +38,12 @@ def test_compare_dicts_sorted_keys():
     assert results[1].key == "Z"
 
 
+def test_compare_dicts_empty():
+    """Comparing two empty dicts should return an empty result list."""
+    results = compare_dicts({}, {})
+    assert results == []
+
+
 def test_compare_vaults(tmp_path):
     a = make_vault(tmp_path, "a.vault", {"X": "hello", "Y": "world"})
     b = make_vault(tmp_path, "b.vault", {"X": "hello", "Y": "changed"})
@@ -56,6 +62,17 @@ def test_compare_vault_dotenv(tmp_path):
     statuses = {r.key: r.status for r in results}
     assert statuses["FOO"] == "match"
     assert statuses["BAZ"] == "only_right"
+
+
+def test_compare_vault_dotenv_only_left(tmp_path):
+    """Keys present in vault but missing from dotenv should appear as only_left."""
+    vault = make_vault(tmp_path, "v.vault", {"SECRET": "value"})
+    dotenv = str(tmp_path / ".env")
+    with open(dotenv, "w") as f:
+        f.write("OTHER=something\n")
+    results = compare_vault_dotenv(vault, "pass", dotenv)
+    statuses = {r.key: r.status for r in results}
+    assert statuses["SECRET"] == "only_left"
 
 
 def test_format_compare_report_contains_summary():
