@@ -69,3 +69,16 @@ def test_encrypt_large_payload():
     large_text = "KEY=" + "x" * 100_000
     token = encrypt(large_text, PASSWORD)
     assert decrypt(token, PASSWORD) == large_text
+
+
+def test_decrypt_empty_password_raises():
+    """An empty password should raise a ValueError rather than silently producing garbage."""
+    token = encrypt(PLAINTEXT, PASSWORD)
+    with pytest.raises(ValueError):
+        decrypt(token, "")
+
+
+def test_encrypt_empty_password_raises():
+    """Encrypting with an empty password should raise a ValueError."""
+    with pytest.raises(ValueError):
+        encrypt(PLAINTEXT, "")
