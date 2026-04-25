@@ -26,6 +26,9 @@ def lock_group():
 def lk_vault(reason, vault_path):
     """Lock the entire vault against writes."""
     p = Path(vault_path)
+    if not p.exists():
+        click.echo(f"Vault not found: {vault_path}", err=True)
+        raise SystemExit(1)
     lock_vault(p, reason=reason or None)
     msg = "Vault locked."
     if reason:
@@ -38,6 +41,12 @@ def lk_vault(reason, vault_path):
 def lk_unlock_vault(vault_path):
     """Unlock the entire vault."""
     p = Path(vault_path)
+    if not p.exists():
+        click.echo(f"Vault not found: {vault_path}", err=True)
+        raise SystemExit(1)
+    if not is_vault_locked(p):
+        click.echo("Vault is not locked.", err=True)
+        raise SystemExit(1)
     unlock_vault(p)
     click.echo("Vault unlocked.")
 
@@ -49,6 +58,9 @@ def lk_unlock_vault(vault_path):
 def lk_key(key, reason, vault_path):
     """Lock a specific KEY against modification."""
     p = Path(vault_path)
+    if not p.exists():
+        click.echo(f"Vault not found: {vault_path}", err=True)
+        raise SystemExit(1)
     lock_key(p, key, reason=reason or None)
     msg = f"Key '{key}' locked."
     if reason:
@@ -75,6 +87,9 @@ def lk_unlock_key(key, vault_path):
 def lk_status(vault_path):
     """Show lock status for vault and all locked keys."""
     p = Path(vault_path)
+    if not p.exists():
+        click.echo(f"Vault not found: {vault_path}", err=True)
+        raise SystemExit(1)
     vault_locked = is_vault_locked(p)
     reason = get_vault_lock_reason(p)
     status = "LOCKED" if vault_locked else "unlocked"
