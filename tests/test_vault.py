@@ -64,3 +64,18 @@ def test_list_vars_returns_all(tmp_path):
     save_vault({"A": "1", "B": "2", "C": "3"}, PASSWORD, vault_file)
     result = list_vars(PASSWORD, vault_file)
     assert result == {"A": "1", "B": "2", "C": "3"}
+
+
+def test_list_vars_empty_vault_returns_empty(tmp_path):
+    """list_vars on a non-existent vault should return an empty dict."""
+    vault_file = str(tmp_path / ".envault")
+    result = list_vars(PASSWORD, vault_file)
+    assert result == {}
+
+
+def test_save_vault_persists_to_disk(tmp_path):
+    """Saving a vault should create a file on disk."""
+    vault_file = str(tmp_path / ".envault")
+    save_vault({"KEY": "value"}, PASSWORD, vault_file)
+    import os
+    assert os.path.exists(vault_file)
