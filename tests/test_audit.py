@@ -68,3 +68,14 @@ def test_event_has_timestamp(vault_dir):
     events = get_events(vault_dir)
     assert "timestamp" in events[0]
     assert "Z" in events[0]["timestamp"] or "+" in events[0]["timestamp"]
+
+
+def test_events_are_ordered_chronologically(vault_dir):
+    """Events should be returned in the order they were logged."""
+    log_event(vault_dir, "set", "FIRST")
+    log_event(vault_dir, "set", "SECOND")
+    log_event(vault_dir, "set", "THIRD")
+    events = get_events(vault_dir)
+    assert events[0]["key"] == "FIRST"
+    assert events[1]["key"] == "SECOND"
+    assert events[2]["key"] == "THIRD"
