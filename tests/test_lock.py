@@ -92,3 +92,17 @@ def test_lock_and_unlock_does_not_affect_other_keys(vault_file):
     unlock_key(vault_file, "KEY_A")
     assert is_key_locked(vault_file, "KEY_A") is False
     assert is_key_locked(vault_file, "KEY_B") is True
+
+
+def test_lock_key_without_reason_has_empty_reason(vault_file):
+    """Locking a key without a reason should store an empty string as the reason."""
+    lock_key(vault_file, "NO_REASON_KEY")
+    locked = list_locked_keys(vault_file)
+    assert "NO_REASON_KEY" in locked
+    assert locked["NO_REASON_KEY"] == ""
+
+
+def test_lock_vault_no_reason_returns_empty_string(vault_file):
+    """get_vault_lock_reason should return empty string when no reason was given."""
+    lock_vault(vault_file)
+    assert get_vault_lock_reason(vault_file) == ""
