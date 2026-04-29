@@ -35,6 +35,15 @@ def test_get_history_actor_preserved(vault_file):
     assert "carol" in actors
 
 
+def test_get_history_entries_are_ordered_by_timestamp(vault_file):
+    """Verify that history entries are returned in chronological order."""
+    log_event(str(vault_file), "set", "API_KEY", actor="first")
+    log_event(str(vault_file), "set", "API_KEY", actor="second")
+    history = get_history(str(vault_file), "API_KEY")
+    timestamps = [e.timestamp for e in history]
+    assert timestamps == sorted(timestamps)
+
+
 def test_format_history_no_entries():
     result = format_history([])
     assert result == "No history found."
